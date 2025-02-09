@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-web-api
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-web-api
+  template:
+    metadata:
+      labels:
+        app: spring-web-api
+    spec:
+      containers:
+        - name: spring-web-api
+          image: emreatalay22/demo-app:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ACTIVE_PROFILE
+              value: "docker"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+      restartPolicy: Always

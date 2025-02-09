@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: haproxy
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  ports:
+    - name: primary
+      port: 5432
+      targetPort: 5432
+    - name: replica
+      port: 5433
+      targetPort: 5433
+  selector:
+    app: haproxy
+  type: ClusterIP

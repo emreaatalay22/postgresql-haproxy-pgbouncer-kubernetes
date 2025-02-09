@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-config
+  namespace: postgresql-haproxy-pgbouncer
+data:
+  haproxy.cfg: |
+    global
+        log stdout format raw local0
+        maxconn 4000
+
+    defaults
+        log global
+        timeout connect 5000ms
+        timeout client 50000ms
+        timeout server 50000ms
+
+    frontend postgresql
+        bind *:5432
+        mode tcp
+        default_backend pgbouncer
+
+    backend pgbouncer
+        mode tcp
+        balance roundrobin
+        server pgbouncer pgbouncer:6432 check
+
+    frontend postgresql-replica
+        bind *:5433
+        mode tcp
+        default_backend replicas
+
+    backend replicas
+        mode tcp
+        balance leastconn
+        server replica1 postgres-replica1:5432 check
+        server replica2 postgres-replica2:5432 check

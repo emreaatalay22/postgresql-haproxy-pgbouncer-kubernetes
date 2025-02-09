@@ -1,0 +1,191 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: postgresql-haproxy-pgbouncer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-master-pvc
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-master
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-master
+  template:
+    metadata:
+      labels:
+        app: postgres-master
+    spec:
+      containers:
+        - name: postgres-master
+          image: postgres:15
+          env:
+            - name: POSTGRES_USER
+              value: "admin"
+            - name: POSTGRES_PASSWORD
+              value: "admin123"
+            - name: POSTGRES_DB
+              value: "mydb"
+            - name: PG_MAX_CONNECTIONS
+              value: "100"
+            - name: PGOPTIONS
+              value: "-c tcp_keepalives_idle=600 -c tcp_keepalives_interval=60"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-master-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-master-storage
+          persistentVolumeClaim:
+            claimName: postgres-master-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-master
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres-master
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-replica1-pvc
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-replica1
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-replica1
+  template:
+    metadata:
+      labels:
+        app: postgres-replica1
+    spec:
+      containers:
+        - name: postgres-replica1
+          image: postgres:15
+          env:
+            - name: POSTGRES_USER
+              value: "admin"
+            - name: POSTGRES_PASSWORD
+              value: "admin123"
+            - name: POSTGRES_DB
+              value: "mydb"
+            - name: PG_MAX_CONNECTIONS
+              value: "100"
+            - name: PGOPTIONS
+              value: "-c tcp_keepalives_idle=600 -c tcp_keepalives_interval=60"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-replica1-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-replica1-storage
+          persistentVolumeClaim:
+            claimName: postgres-replica1-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-replica1
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres-replica1
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-replica2-pvc
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-replica2
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-replica2
+  template:
+    metadata:
+      labels:
+        app: postgres-replica2
+    spec:
+      containers:
+        - name: postgres-replica2
+          image: postgres:15
+          env:
+            - name: POSTGRES_USER
+              value: "admin"
+            - name: POSTGRES_PASSWORD
+              value: "admin123"
+            - name: POSTGRES_DB
+              value: "mydb"
+            - name: PG_MAX_CONNECTIONS
+              value: "100"
+            - name: PGOPTIONS
+              value: "-c tcp_keepalives_idle=600 -c tcp_keepalives_interval=60"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-replica2-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-replica2-storage
+          persistentVolumeClaim:
+            claimName: postgres-replica2-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-replica2
+  namespace: postgresql-haproxy-pgbouncer
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres-replica2
