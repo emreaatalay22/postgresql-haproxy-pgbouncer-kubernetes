@@ -6,7 +6,9 @@ metadata:
 data:
   pgbouncer.ini: |
     [databases]
-    mydb = host=postgres-master port=5432 dbname=mydb user=admin password=admin123
+    mydb = host=postgres-master port=5432 dbname=mydb user=admin password=admin123  pool_size=100
+    replica1 = host=postgres-replica1 port=5432 dbname=mydb user=admin password=admin123 pool_size=100
+    replica2 = host=postgres-replica2 port=5432 dbname=mydb user=admin password=admin123 pool_size=100
 
     [pgbouncer]
     listen_port = 6432
@@ -15,7 +17,7 @@ data:
     auth_file = /etc/pgbouncer/userlist.txt
     pool_mode = transaction
     max_client_conn = 100
-    default_pool_size = 20
+    default_pool_size = 100
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -24,4 +26,9 @@ metadata:
   namespace: postgresql-haproxy-pgbouncer
 data:
   userlist.txt: |
-    "admin" "md5$(echo -n 'admin123admin' | md5sum | awk '{print $1}')"
+    "admin" "md5ed348175a97f96082cb9605d89caa099"
+    "stats" "md525d58b34e8d2ccfbd372cb19f38e2c3c"
+    "postgres" "md532e12f215ba27cb750c9e093ce4b5127"
+    "admin" "admin123"
+    "stats" "md525d58b34e8d2ccfbd372cb19f38e2c3c"
+    "postgres" "admin123"
