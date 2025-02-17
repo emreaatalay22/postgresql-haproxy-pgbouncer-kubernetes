@@ -13,11 +13,13 @@ spec:
       labels:
         app: spring-web-api
     spec:
+      serviceAccountName: prometheus-serviceaccount
       containers:
         - name: spring-web-api
           image: emreatalay22/demo-app:latest
           ports:
             - containerPort: 8080
+              name: http  # Prometheus bu port'u kullanır
           env:
             - name: ACTIVE_PROFILE
               value: "docker"

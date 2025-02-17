@@ -33,5 +33,17 @@ data:
 
       - job_name: 'spring-web-api'
         metrics_path: '/actuator/prometheus'
-        static_configs:
-          - targets: ['spring-web-api:8080']
+        kubernetes_sd_configs:
+          - role: pod  # Pod'ları keşfet
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: spring-web-api  # Sadece bu etikete sahip pod'ları al
+          - source_labels: [__meta_kubernetes_pod_container_port_name]
+            action: keep
+            regex: http  # Sadece "http" port'u olan pod'ları al
+          - source_labels: [__meta_kubernetes_pod_ip]
+            target_label: __address__
+            replacement: $1:8080  # Pod IP'sini ve portunu hedef olarak ayarla
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: instance  # Pod adını "instance" etiketi olarak ekle

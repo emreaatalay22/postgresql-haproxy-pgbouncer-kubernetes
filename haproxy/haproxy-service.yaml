@@ -11,6 +11,9 @@ spec:
     - name: replica
       port: 5433
       targetPort: 5433
+    - name: stats
+      port: 1936
+      targetPort: 1936
   selector:
     app: haproxy
   type: ClusterIP

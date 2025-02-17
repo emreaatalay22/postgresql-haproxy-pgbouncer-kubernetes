@@ -6,9 +6,9 @@ metadata:
 data:
   pgbouncer.ini: |
     [databases]
-    mydb = host=postgres-master port=5432 dbname=mydb user=admin password=admin123  pool_size=100
-    replica1 = host=postgres-replica1 port=5432 dbname=mydb user=admin password=admin123 pool_size=100
-    replica2 = host=postgres-replica2 port=5432 dbname=mydb user=admin password=admin123 pool_size=100
+    mydb = host=postgres-master port=5432 dbname=mydb user=admin password=admin123  pool_size=100 reserve_pool_size=5
+    replica1 = host=postgres-replica1 port=5432 dbname=mydb user=admin password=admin123 pool_size=100 reserve_pool_size=5
+    replica2 = host=postgres-replica2 port=5432 dbname=mydb user=admin password=admin123 pool_size=100 reserve_pool_size=5
 
     [pgbouncer]
     listen_port = 6432
@@ -18,6 +18,10 @@ data:
     pool_mode = transaction
     max_client_conn = 100
     default_pool_size = 100
+    server_idle_timeout = 60
+    ignore_startup_parameters = application_name,extra_float_digits
+    admin_users = admin
+    stats_users = admin
 ---
 apiVersion: v1
 kind: ConfigMap

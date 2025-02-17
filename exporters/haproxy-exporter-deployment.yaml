@@ -16,8 +16,8 @@ spec:
       containers:
         - name: haproxy-exporter
           image: quay.io/prometheus/haproxy-exporter:v0.15.0
-          command:
-            - "--haproxy.scrape-uri=http://admin:admin@haproxy:1936/stats;csv;csv;norefresh"
+          args:
+            - --haproxy.scrape-uri=http://admin:admin@haproxy:1936/stats;csv;csv;norefresh
           ports:
             - containerPort: 9101
 ---

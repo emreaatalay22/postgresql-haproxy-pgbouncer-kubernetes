@@ -19,6 +19,7 @@ spec:
           ports:
             - containerPort: 5432
             - containerPort: 5433
+            - containerPort: 1936
           volumeMounts:
             - name: haproxy-config
               mountPath: /usr/local/etc/haproxy/haproxy.cfg

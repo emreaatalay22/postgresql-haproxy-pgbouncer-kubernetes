@@ -4,10 +4,15 @@ metadata:
   name: spring-web-api
   namespace: postgresql-haproxy-pgbouncer
 spec:
+  clusterIP: 10.96.174.4
+  ports:
+  - name: spring-web-api
+    nodePort: 32634
+    port: 8080
   selector:
     app: spring-web-api
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-  type: ClusterIP
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 198.51.100.0

@@ -35,3 +35,12 @@ data:
         balance leastconn
         server replica1 postgres-replica1:5432 check
         server replica2 postgres-replica2:5432 check
+
+    frontend stats
+        mode http
+        bind *:1936
+        stats enable
+        stats uri /stats;csv
+        stats refresh 10s
+        stats auth admin:admin
+        stats realm Haproxy\ Statistics  # Title text for popup window
